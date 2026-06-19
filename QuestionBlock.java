@@ -81,14 +81,14 @@ public class QuestionBlock extends Entity {
   }
 
   // ---------------- GETS ----------------
-
-  public float getX() { return posicio.x; }
-  public float getY() { return posicio.y; }
-  public float getWidth() { return amplada; }
-  public float getHeight() { return altura; }
-  public float getRadi() { return amplada * 0.5f; }
-
-  public boolean isSolid() {
-    return estat != Estat.IDLE; // després del hit ja és sòlid
-  }
+  public float   getX      () { return posicio.x;           }
+  public float   getY      () { return posicio.y;           }
+  public float   getWidth  () { return amplada;             }
+  public float   getHeight () { return altura;              }
+  public float   getRadi   () { return amplada * 0.5f;      }
+  public float   getLeft   () { return posicio.x;           }
+  public float   getRight  () { return posicio.x + amplada; }
+  public float   getTop    () { return posicio.y;           }
+  public float   getBottom () { return posicio.y + altura;  }
+  public boolean isSolid   () { return estat != Estat.IDLE; } // després del hit ja és sòlid
 }

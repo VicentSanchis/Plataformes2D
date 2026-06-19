@@ -151,7 +151,7 @@ public class Nivell {
     gestor.resolColisionsX(personatge, tileMap);
     
     personatge.mouY ();
-    gestor.resolColisionsY(personatge, tileMap);
+    gestor.resolColisionsY(personatge, tileMap, questionBlocks);
   }
   
   protected void actualitzaEnemics() {

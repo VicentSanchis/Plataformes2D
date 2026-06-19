@@ -126,6 +126,18 @@ public class TileMap {
     }
   }
   
+  private int getMask(int tx, int ty) {
+
+    int mask = 0;
+
+    if (esSolid(tx, ty-1)) mask |= 1; // nord
+    if (esSolid(tx+1, ty)) mask |= 2; // est
+    if (esSolid(tx, ty+1)) mask |= 4; // sud
+    if (esSolid(tx-1, ty)) mask |= 8; // oest
+
+    return mask;
+}
+  
   public boolean esAire (int tx, int ty) {
     return tiles[ty][tx] == AIR;
   }

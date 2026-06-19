@@ -36,16 +36,13 @@ void actualitzaCamera () {
   Nivell n = game.getNivellActual();
   TileMap map = n.getTileMap();
 
-  float cameraObjectiuX = width/2 - n.getPlayerPositionX();
+  float cameraObjectiuX = width/2  - n.getPlayerPositionX();
   float cameraObjectiuY = height/2 - n.getPlayerPositionY();
-
-  float ampladaNivell = n.getAmpladaNivell();
-
-  float limitEsquerre = 0;
-  float limitDret     = -(ampladaNivell - width);
-
-  float limitSuperior = map.getCameraMinY();
-  float limitInferior = -(map.getCameraMaxY() - height);
+  float ampladaNivell   = n.getAmpladaNivell();
+  float limitEsquerre   = 0;
+  float limitDret       = -(ampladaNivell - width);
+  float limitSuperior   = map.getCameraMinY();
+  float limitInferior   = -(map.getCameraMaxY() - height);
 
   cameraObjectiuX = constrain(cameraObjectiuX, limitDret, limitEsquerre);
   cameraObjectiuY = constrain(cameraObjectiuY, limitInferior, limitSuperior);

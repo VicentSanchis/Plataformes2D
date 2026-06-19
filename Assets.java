@@ -2,6 +2,9 @@ import processing.core.PApplet;
 import processing.core.PImage;
 
 public class Assets {
+  
+  // Per l'autotiling
+  public static PImage [] TILE_SOLID = new PImage [16];
 
   // Tiles
   public static PImage TILE_GRASS_LEFT;

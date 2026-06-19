@@ -13,8 +13,7 @@ public class GestorCollisions {
     int     topTile    = mapa.worldToTile(top);
     int     bottomTile = mapa.worldToTile(bottom);
 
-    // ================= DRETA =================
-    if (b.getVelocitatX() > 0) {
+    if (b.getVelocitatX() > 0) {   // ================= DRETA =================
       int tileX = mapa.worldToTile(nextX + radi);
 
       for (int y = topTile; y <= bottomTile; y++) {
@@ -25,9 +24,9 @@ public class GestorCollisions {
         }
       }
     }
-    // ================= ESQUERRA =================
-    else if (b.getVelocitatX() < 0) {
+    else if (b.getVelocitatX() < 0) {  // ================= ESQUERRA =================
       int tileX = mapa.worldToTile(nextX - radi);
+      
       for (int y = topTile; y <= bottomTile; y++) {
         if (mapa.esSolidLateral(tileX, y)) {
           pos.x = (tileX + 1) * mapa.tileSize + radi + 0.01f;
@@ -37,8 +36,8 @@ public class GestorCollisions {
       }
     }
   }
-
-  public void resolColisionsY (Boleta b, TileMap mapa) {
+  
+  public void resolColisionsY (Boleta b, TileMap mapa, ArrayList<QuestionBlock> blocs) {
     PVector pos         = b.getPosicio();
     float   radi        = b.getRadi();
     float   esquerra    = pos.x - radi;
@@ -49,50 +48,57 @@ public class GestorCollisions {
     int     rightTile   = mapa.worldToTile(dreta);
     boolean tocantTerra = false;
 
-    // ===== CAIENT =====
-    if (b.getVelocitatY() >= 0) {
-      int bottomTile = mapa.worldToTile(bottom); 
+    if (b.getVelocitatY() >= 0) {  // ===== CAIENT =====
+      int bottomTile = mapa.worldToTile (bottom); 
       for (int tx = leftTile; tx <= rightTile; tx++) {
 
-        boolean esSolid       = mapa.esSolid(tx, bottomTile);
-        boolean oneWay        = mapa.esOneWay(tx, bottomTile);
-        boolean questionBlock = mapa.esQuestionBlock(tx, bottomTile);
+        boolean esSolid = mapa.esSolid  (tx, bottomTile);
+        boolean oneWay  = mapa.esOneWay (tx, bottomTile);
 
-        if (!esSolid && !oneWay && !questionBlock)
+        if (!esSolid && !oneWay)
           continue;
 
         if (oneWay) {
+          tocantTerra = true;
           if (b.getPosicioAnteriorY() + radi > bottomTile * mapa.tileSize)
             continue;
         }
         
         pos.y = bottomTile * mapa.tileSize - radi;
-        b.setVelocitatY(0);
+        b.setVelocitatY (0);
         b.setEnTerra(true);
         return;
-        
+      }
+      
+      for (QuestionBlock bloc : blocs) {
+        boolean overlapX = (pos.x + radi > bloc.getLeft()) && (pos.x - radi < bloc.getRight());
+        boolean landing  = b.getPosicioAnteriorY() + radi <= bloc.getTop() && bottom >= bloc.getTop();
+    
+        if (overlapX && landing) {
+          pos.y = bloc.getTop() - radi;
+          b.setVelocitatY(0);
+          b.setEnTerra(true);
+          return;
+        }
       }
     }
-    // ===== PUJANT =====
-    else if (b.getVelocitatY() < 0) { //<>//
+    else if (b.getVelocitatY() < 0) {  // ===== PUJANT =====
       int topTile = mapa.worldToTile(top);
       for (int tx = leftTile; tx <= rightTile; tx++) {
         
-        if (mapa.esOneWay(tx, topTile)) {
+        if (mapa.esOneWay(tx, topTile))
           continue;
-        } 
           
-        if (!mapa.esSolid(tx, topTile)) {
+        if (!mapa.esSolid(tx, topTile)) 
           continue;
-        }
           
         pos.y = (topTile + 1) * mapa.tileSize + radi;
         b.setVelocitatY(0);
         break;
       }
-    }
+    } 
     b.setEnTerra(tocantTerra);
-  }
+  } //<>// //<>//
   
   public int resolColisionsJugadorEnemics (Boleta player, ArrayList<Enemy> enemics) {
     if (player.estaMort()) 
@@ -138,7 +144,7 @@ public class GestorCollisions {
     return score;
   }
 
-  public int resolColisionsJugadorMonedes(Boleta player,  ArrayList<Coin> coins) {
+  public int resolColisionsJugadorMonedes (Boleta player,  ArrayList<Coin> coins) {
     int score = 0;
     for (int i = coins.size()-1; i >= 0; i--) {
       Coin c = coins.get(i);
@@ -162,14 +168,13 @@ public class GestorCollisions {
     int score = 0;
     
     for (int i = blocs.size()-1; i >= 0; i--) {
-  
       QuestionBlock bloc = blocs.get(i);
       
       // Calculem els límits del questionBlock
-      float left   = bloc.getX();
-      float right  = bloc.getX() + bloc.getWidth();
-      float top    = bloc.getY();
-      float bottom = bloc.getY() + bloc.getHeight();
+      float left    = bloc.getX();
+      float right   = bloc.getX() + bloc.getWidth();
+      float top     = bloc.getY();
+      float bottom  = bloc.getY() + bloc.getHeight();
       
       // Calculem els límits del jugador
       float pLeft   = player.getX() - player.getRadi();
@@ -180,24 +185,14 @@ public class GestorCollisions {
       float playerPrevBottom = player.getPosicioAnteriorY() + player.getRadi();
       float playerNowTop     = player.getY() - player.getRadi();
       
-      boolean overlap = pRight > left && pLeft < right && pBottom > top && pTop < bottom;
-      
+      boolean overlap          = pRight > left && pLeft < right && pBottom > top && pTop < bottom;
       boolean hittingFromBelow = player.getVelocitatY() < 0 && playerPrevBottom >= bottom;
         
-      // Per colpejar per baix
-      if (overlap && hittingFromBelow) {
+      if (overlap && hittingFromBelow) {  // Per colpejar per baix
         bloc.hit();
         player.setVelocitatY(2);
         player.getPosicio().y = bottom + player.getRadi();
         score += 30;
-      }
-      
-      boolean landingOnTop =  player.getVelocitatY() >= 0 &&  playerPrevBottom <= top;
-      // Per colpejar per dalt
-      if (overlap && landingOnTop) {
-        player.getPosicio().y = top - player.getRadi();
-        player.setVelocitatY(0);
-        player.setEnTerra(true);
       }
     }
     return score;

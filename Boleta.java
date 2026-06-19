@@ -67,7 +67,7 @@ public class Boleta extends Entity {
     }
   }
   
-  private void dibuixaCos(float amp, float alt, int colorCos) {
+  private void dibuixaCos (float amp, float alt, int colorCos) {
     app.strokeWeight(1);
       app.stroke(0, 150, 0);
       app.fill(colorCos);
@@ -86,7 +86,7 @@ public class Boleta extends Entity {
       
       // Boca
       app.fill(255,0,0);
-      app.ellipse(0,9,7,2);
+      app.ellipse(0,9,7,3);
   }
   
   public void update (TileMap tileMap) {
@@ -168,12 +168,12 @@ public class Boleta extends Entity {
     celebracioTarget = new PVector(x, y);
     celebracioFase = 0;
   }
+  
   private void updateCelebracio() {
 
     switch (celebracioFase) {
 
         case 0:
-
             posicio.x = PApplet.lerp(
                 posicio.x,
                 celebracioTarget.x,
